@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crud Node JS - MySQL</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        function validateForm() {
+            // bagian notifikasi tambah
+            const nama = document.getElementById('nama').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const notification = document.getElementById('notification');
+            
+            if (!nama && !email && !phone) {
+                notification.innerText = 'Please fill in at least one field to add a new user.';
+                notification.style.display = 'block'; 
+                return false; 
+            }
+
+            let summaryMessage = 'Are you sure you want to add the following user?\n';
+            if (nama) summaryMessage += `Name: ${nama}\n`;
+            if (email) summaryMessage += `Email: ${email}\n`;
+            if (phone) summaryMessage += `Phone: ${phone}\n`;
+
+            const confirmAddition = confirm(summaryMessage);
+            if (!confirmAddition) {
+                notification.innerText = 'User addition cancelled.';
+                notification.style.display = 'block'; 
+                return false; 
+            }
+
+            notification.style.display = 'none'; 
+            return true; 
+        }
+
+        // bagian notifikasi hapus
+        function confirmDeletion(event, userName) {
+            event.preventDefault(); 
+            const notification = document.getElementById('notification');
+        
+            const confirmDeletion = confirm(`Are you sure you want to delete the user: ${userName}?`);
+            if (confirmDeletion) {
+                notification.innerText = `User ${userName} has been deleted.`;
+                notification.style.display = 'block'; 
+                window.location.href = event.target.href; 
+            } else {
+                notification.innerText = 'User deletion cancelled.';
+                notification.style.display = 'block'; 
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Daftar User/Pengguna</h1>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Email</th>
+            <th>Telephon</th>
+            <th>Aksi</th>
+        </tr>
+        <% users.forEach(Pengguna => {%>
+        <tr>
+            <td><%= Pengguna.id %></td>
+            <td><%= Pengguna.nama %></td>
+            <td><%= Pengguna.email %></td>
+            <td><%= Pengguna.phone %></td>
+            <td>
+                <a href="/edit/<%= Pengguna.id %>">Edit</a>
+                <a href="/delete/<%= Pengguna.id %>" onclick="confirmDeletion(event, '<%= Pengguna.nama %>')">Hapus</a>
+            </td>
+        </tr>
+        <% })%>
+    </table>
+
+    <h2>Tambah Pengguna Baru</h2>
+    <form action="/add" method="post" onsubmit="return validateForm()">
+        <label for="nama">Nama:</label>
+        <input type="text" id="nama" name="nama"><br>
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email"><br>
+        <label for="phone">Telephon:</label>
+        <input type="text" name="phone" id="phone"><br>
+        <button type="submit">Tambah</button>
+    </form>
+</body>
+</html>
